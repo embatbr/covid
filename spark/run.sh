@@ -19,6 +19,6 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
 ${SPARK_HOME}/bin/spark-submit \
     --packages org.apache.hadoop:hadoop-aws:2.7.3 \
-    --py-files functions.py,settings.py \
+    --py-files src/functions.py,src/settings.py \
     --master local[*] \
-    main.py ${JOB_ID} ${QUESTION}
+    src/main.py ${JOB_ID} ${QUESTION}

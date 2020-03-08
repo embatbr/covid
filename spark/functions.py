@@ -3,6 +3,10 @@
 from datetime import datetime as dt
 from datetime import timedelta as td
 
+from pyspark.rdd import RDD
+
+import settings
+
 
 def safe_int(x):
     if x and x.isdigit():
@@ -69,47 +73,76 @@ def convert(obj):
     }
 
 
-def question_1(rdd_param):
+def write_job_result(result, job_id):
+    filepath = '{}/{}'.format(settings.OUTPUT_FILES_DIRPATH, job_id)
+    if isinstance(result, RDD):
+        result.saveAsTextFile(filepath)
+    else:
+        with open(filepath, 'w') as f:
+            f.write(result)
+
+
+def question_1(rdd_param, job_id):
     rdd = rdd_param.map(lambda x: (x['host'], 1))
     rdd = rdd.filter(lambda x: x[0] is not None)
     rdd = rdd.reduceByKey(lambda x, y: x + y)
     rdd = rdd.map(lambda x: x[0])
 
-    return rdd.collect()
+    result = rdd.collect()
+    result.sort()
+    result = '\n'.join(result)
+
+    write_job_result(result, job_id)
 
 
-def question_2(rdd_param):
+def question_2(rdd_param, job_id):
     rdd = rdd_param.map(lambda x: x['status'])
     rdd = rdd.filter(lambda x: x is not None)
     rdd = rdd.filter(lambda x: x == 404)
 
-    return rdd.count()
+    result = rdd.count()
+    result = str(result)
+
+    write_job_result(result, job_id)
 
 
-def question_3(rdd_param):
+def question_3(rdd_param, job_id):
     rdd = rdd_param.filter(lambda x: x['status'] == 404)
     rdd = rdd.map(lambda x: (x['host'], 1))
     rdd = rdd.filter(lambda x: x[0] is not None)
     rdd = rdd.reduceByKey(lambda x, y: x + y)
 
-    return rdd.top(5, key=lambda x: x[1])
+    result = rdd.top(5, key=lambda x: x[1])
+    result = [error for (error, _) in result]
+    result = '\n'.join(result)
+    result = str(result)
+
+    write_job_result(result, job_id)
 
 
-def question_4(rdd_param):
+def question_4(rdd_param, job_id):
     rdd = rdd_param.filter(lambda x: x['status'] == 404)
     rdd = rdd_param.map(lambda x: (x['timestamp'], 1))
     rdd = rdd.filter(lambda x: x[0] is not None)
     rdd = rdd.map(lambda x: (x[0].strftime('%Y-%m-%d'), x[1]))
     rdd = rdd.reduceByKey(lambda x, y: x + y)
 
-    return rdd.collect()
+    result = rdd.collect()
+    result.sort(key=lambda x: x[0])
+    result = ['{} {}'.format(date, count) for (date, count) in result]
+    result = '\n'.join(result)
+
+    write_job_result(result, job_id)
 
 
-def question_5(rdd_param):
+def question_5(rdd_param, job_id):
     rdd = rdd_param.map(lambda x: x['bytes'])
     rdd = rdd.filter(lambda x: x)
 
-    return rdd.reduce(lambda x, y: x + y)
+    result = rdd.reduce(lambda x, y: x + y)
+    result = str(result)
+
+    write_job_result(result, job_id)
 
 
 questions = {

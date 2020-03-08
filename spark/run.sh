@@ -5,7 +5,8 @@ export SUBROOT_PATH="${PROJECT_ROOT_PATH}/spark"
 cd ${SUBROOT_PATH}
 
 
-QUESTION="${1}"
+JOB_ID="${1}"
+QUESTION="${2}"
 
 
 if [ -z "$SPARK_HOME" ]; then
@@ -20,4 +21,4 @@ ${SPARK_HOME}/bin/spark-submit \
     --packages org.apache.hadoop:hadoop-aws:2.7.3 \
     --py-files functions.py,settings.py \
     --master local[*] \
-    main.py ${QUESTION}
+    main.py ${JOB_ID} ${QUESTION}

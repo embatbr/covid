@@ -12,19 +12,18 @@ if __name__ == '__main__':
     filename = 'access_log_{Jul,Aug}95'
 
     args = sys.argv[1:]
-    question = int(args[0])
+    job_id = args[0]
+    question = int(args[1])
 
     spark_context = SparkSession.builder.appName('covid').getOrCreate().sparkContext
     spark_context._conf.set("spark.executorEnv.JAVA_HOME", settings.JAVA_HOME)
     spark_context._conf.set("spark.driver.maxResultSize", settings.MAX_RESULT_SIZE)
 
-    filepath = '{}/files/{}'.format(settings.PROJECT_ROOT_PATH, filename)
+    filepath = '{}/{}'.format(settings.INPUT_FILES_DIRPATH, filename)
     rdd = spark_context.textFile(filepath)
     rdd = rdd.map(line2dict)
     rdd = rdd.map(convert)
 
-    print()
-    print(questions[question](rdd))
-    print()
+    questions[question](rdd, job_id)
 
     spark_context.stop()

@@ -41,3 +41,9 @@ Submits a job to Spark, to process one of the questions described. Since only on
 #### GET /job/{id}
 
 Gets the result from a job (UUID, as described above), when the job has already finished, or nothing when the job is currently running.
+
+
+## For the future
+
+- Better response formatting;
+- Add a queue for jobs submitted. See [Speedy Gonzales](https://github.com/embatbr/speedy-gonzales);

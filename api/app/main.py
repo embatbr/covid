@@ -3,6 +3,7 @@
 import falcon
 
 from app import controllers
+from app import executors
 
 
 class RESTfulApplication(object):
@@ -18,8 +19,12 @@ class RESTfulApplication(object):
 
 application = falcon.API()
 
+spark_executor = executors.SparkExecutor()
+
 routes = {
-    '/': controllers.HealthController()
+    '/': controllers.HealthController(),
+    '/question/{param}': controllers.JobController(spark_executor),
+    '/job/{param}': controllers.JobController(spark_executor)
 }
 
 restful_application = RESTfulApplication(application, routes)

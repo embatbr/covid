@@ -21,4 +21,6 @@ ${SPARK_HOME}/bin/spark-submit \
     --packages org.apache.hadoop:hadoop-aws:2.7.3 \
     --py-files src/functions.py,src/settings.py \
     --master local[*] \
-    src/main.py ${JOB_ID} ${QUESTION}
+    src/main.py ${JOB_ID} ${QUESTION} &
+
+echo $! > spark.pid
